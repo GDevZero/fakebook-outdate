@@ -1,0 +1,5 @@
+
+> final-project-codecamp@0.1.0 start
+> SET NODE_OPTIONS=--openssl-legacy-provider && npx react-scripts start
+
+sh: 1: SET: not found

@@ -1,42 +1,34 @@
-import React, { Component } from 'react'
-import * as allRoutes from './index'
-import rolesConfig from '../../config/roles'
-import { Route, withRouter } from 'react-router-dom';
-import { Redirect } from 'react-router-dom'
+import React, { useState, useEffect } from 'react';
+import * as allRoutes from './index';
+import rolesConfig from '../../config/roles';
+import { Route, useNavigate, Navigate } from 'react-router-dom';
 
-class PrivateRoute extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      allowedRoutes: []
-    }
-  }
+function PrivateRoute(props) {
+  const [allowedRoutes, setAllowedRoutes] = useState([]);
+  const navigate = useNavigate();
 
-  componentDidMount() {
-    let role = this.props.role
+  useEffect(() => {
+    let role = props.role;
     if (role) {
-      this.setState({
-        allowedRoutes: rolesConfig[role].routes
-      })
+      setAllowedRoutes(rolesConfig[role].routes);
     } else {
-      this.props.history.push('/login');
+      navigate('/login');
     }
-  }
+  }, [props.role, navigate]);
 
-  render() {
-    return (
-      <>
-        {this.state.allowedRoutes.map(route =>
-          < Route
-            exact path={route.url}
-            component={allRoutes[route.component]}
-            key={route.url}
-          />
-        )}
-        {this.props.role == "guest" ? <Redirect to='/login' /> : null}
-      </>
-    )
-  }
+  return (
+    <>
+      {allowedRoutes.map(route => (
+        <Route
+          exact
+          path={route.url}
+          element={React.createElement(allRoutes[route.component])}
+          key={route.url}
+        />
+      ))}
+      {props.role === 'guest' ? <Navigate to="/login" /> : null}
+    </>
+  );
 }
 
-export default withRouter(PrivateRoute);
+export default PrivateRoute;

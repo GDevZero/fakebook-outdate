@@ -1,32 +1,33 @@
 import React from 'react';
-import { Switch } from 'react-router-dom'
-
-import { Layout } from 'antd';
+import { Routes } from 'react-router-dom'
+import { Layout, ConfigProvider, theme } from 'antd';
 import NavBar from './components/navbar/NavBar'
 import PrivateRoute from './components/routes/PrivateRoute';
 import { connect } from 'react-redux'
 
 const { Header, Content } = Layout;
+const { useToken } = theme;
 
-class App extends React.Component {
-  render() {
-    const role = this.props.user.role
-    console.log(role)
-    return (
-      <div className="App">
+function App(props) {
+  const { token } = useToken();
+  const role = props.user.role;
+  console.log(role);
+  return (
+    <div className="App">
+      <ConfigProvider>
         <Layout>
-          <Header style={{ height: 'max-content', lineHeight: '0' }} >
+          <Header style={{ backgroundColor: token.colorPrimary }}>
             <NavBar />
           </Header>
           <Content style={{ height: '95vh' }}>
-            <Switch>
-              <PrivateRoute handleAppLogin={this.login} role={role} />
-            </Switch>
+            <Routes>
+              {PrivateRoute({ role: role })}
+            </Routes>
           </Content>
         </Layout>
-      </div>
-    )
-  }
+      </ConfigProvider>
+    </div>
+  )
 }
 
 const mapStateToProps = (state) => {
